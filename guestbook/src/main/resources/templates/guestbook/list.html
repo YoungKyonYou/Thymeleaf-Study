@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th ="http://www.thymeleaf.org">
+<!--basic.html에서 block replace한 곳으로 들어가겠다는 것, this::content는 지금 list.html의 fragment content block 를 의미한다
+ this::content는 현재 파일(list.html) 내의 th:fragment="content" 블록을 참조합니다.
+ 따라서 두 이름이 일치해야 올바르게 작동합니다.-->
+<th:block th:replace="~{/layout/basic :: setContent(~{this::content})}">
+    <th:block th:fragment="content">
+        <h1>GuestBook List Page</h1>
+    </th:block>
+</th:block>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+</body>
+</html>
