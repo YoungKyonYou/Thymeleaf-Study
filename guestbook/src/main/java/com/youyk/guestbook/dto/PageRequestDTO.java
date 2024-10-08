@@ -1,16 +1,18 @@
 package com.youyk.guestbook.dto;
 
-import lombok.Builder;
+import lombok.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+@AllArgsConstructor
 @Builder
-public record PageRequestDTO(
-        int page,
-        int size
-) {
-    public PageRequestDTO(int page, int size) {
+//Setter 가 없으면 localhost:8080/guestbook/list?page=1 에서 바인딩이 안됨
+@Data
+public class PageRequestDTO{
+    private int page;
+    private int size;
+    public PageRequestDTO() {
         this.page = 1;
         this.size = 10;
     }
