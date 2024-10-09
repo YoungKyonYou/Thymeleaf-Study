@@ -7,10 +7,11 @@
     <th:block th:fragment="content">
         <h1 class="mt-4">GuestBook List Page</h1>
 
+        <!--전체 리스트 표시 부분-->
         <table class = "table table-striped">
             <thead>
             <tr>
-<!--                scope="col"은 HTML 테이블에서 <th> 요소가 열 헤더임을 나타냅니다. 이를 통해 브라우저와 스크린 리더는 해당 셀의 내용이 열 전체에 적용된다는 것을 알 수 있습니다.-->
+<!--scope="col"은 HTML 테이블에서 <th> 요소가 열 헤더임을 나타냅니다. 이를 통해 브라우저와 스크린 리더는 해당 셀의 내용이 열 전체에 적용된다는 것을 알 수 있습니다.-->
                 <th scope = "col">#</th>
                 <th scope = "col">Gno</th>
                 <th scope="col">Title</th>
@@ -26,6 +27,30 @@
             </tr>
             </tbody>
         </table>
+        <!--하단 페이지 표시 부분-->
+        <ul class="pagination h-100 justify-content-center align-items-center">
+<!--            prev는 boolean type인데 이전 페이지가 존재하면 Previous 문구를 띄우라는 것-->
+            <li class="page-item " th:if="${result.prev}">
+<!--                href="#": 링크의 목적지 URL입니다. 현재는 #로 설정되어 있어서 클릭해도 다른 페이지로 이동하지 않습니다.-->
+<!--                tabindex="-1": 이 속성은 'Previous' 버튼이 기본적으로 포커스를 받지 않도록 설정합니다 페이지에서 Tab 키를 눌러 이동할 때, 이 버튼은 건너뛰도록 지정됩니다-->
+                <a class="page-link" th:href="@{/guestbook/list(page=${result.start-1})}" tabindex="-1">Previous</a>
+            </li>
+
+<!--            현재 result.page가 해당 page와 같다면 active 클래스가 추가-->
+<!--            <li class="page-item active"> 이런 식으로 나오게 하는 것임 그럼 현재 버튼이 칠해짐-->
+<!--            th:class는 동적인 클래스 할당을 가능하게 합니다. 즉, 조건에 따라 클래스가 추가되거나 제거되도록 할 수 있습니다-->
+<!--            th:each=page 에서 page는 사용자가 클릭한 page 자체를 나타냄-->
+            <li th:class=" 'page-item ' + ${result.page == page?'active':''}" th:each="page:${result.pageList}">
+                <a class="page-link" th:href="@{/guestbook/list(page = ${page})}">
+                    [[${page}]]
+                </a>
+            </li>
+
+<!--            next는 boolean type인데 이후 페이지가 존재하면 next 문구를 띄우라는 것-->
+            <li class="page-item" th:if="${result.next}">
+                <a class="page-link" th:href="@{/guestbook/list(page=${result.end+1})}">Next</a>
+            </li>
+        </ul>
     </th:block>
 </th:block>
 </html>
