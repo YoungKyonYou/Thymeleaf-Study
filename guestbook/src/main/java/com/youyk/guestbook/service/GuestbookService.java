@@ -7,15 +7,18 @@ import com.youyk.guestbook.entity.Guestbook;
 
 public interface GuestbookService{
     Long register(GuestbookDTO dto);
+    GuestbookDTO read(Long gno);
+    void remove(Long gno);
+    void modify(GuestbookDTO dto);
 
     PageResultDTO<GuestbookDTO, Guestbook> getList(PageRequestDTO requestDTO);
 
     default Guestbook dtoToEntity(GuestbookDTO dto){
         return Guestbook.builder()
-                .gno(dto.gno())
-                .title(dto.title())
-                .content(dto.content())
-                .writer(dto.writer())
+                .gno(dto.getGno())
+                .title(dto.getTitle())
+                .content(dto.getContent())
+                .writer(dto.getWriter())
                 .build();
     }
 

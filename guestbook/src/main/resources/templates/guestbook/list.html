@@ -5,7 +5,34 @@
  따라서 두 이름이 일치해야 올바르게 작동합니다.-->
 <th:block th:replace="~{/layout/basic :: setContent(~{this::content})}">
     <th:block th:fragment="content">
-        <h1 class="mt-4">GuestBook List Page</h1>
+        <h1 class="mt-4">GuestBook List Page
+            <span>
+                <a th:href="@{/guestbook/register}">
+                    <button type="button" class="btn btn-outline-primary">REGISTER</button>
+                </a>
+            </span>
+        </h1>
+        <form action="/guestbook/list" method="get" id ="searchForm">
+            <div class="input-group">
+                <input type="hidden" name="page" value="1">
+                <div class="input-group-prepend">
+                    <select class="custom-select" name="type">
+                        <option th:selected="${pageRequestDTO.type == null}">-------</option>
+                        <option value="t" th:selected="${pageRequestDTO.type=='t'}">제목</option>
+                        <option value="t" th:selected="${pageRequestDTO.type=='c'}">내용</option>
+                        <option value="t" th:selected="${pageRequestDTO.type=='w'}">작성자</option>
+                        <option value="tc" th:selected="${pageRequestDTO.type=='tc'}">제목+내용</option>
+                        <option value="tcw" th:selected="${pageRequestDTO.type=='tcw'}">제목+내용+작성자</option>
+                    </select>
+                </div>
+                <input class="form-control" name="keyword" th:value="${pageRequestDTO.keyword}">
+                <div class="input-group-append" id="button-addon4">
+                    <button class="btn btn-outline-secondary btn-search" type="button">Search</button>
+                    <button class="btn btn-outline-secondary btn-clear" type="button">Clear</button>
+                </div>
+            </div>
+        </form>
+
 
         <!--전체 리스트 표시 부분-->
         <table class = "table table-striped">
@@ -20,7 +47,9 @@
             </thead>
             <tbody>
             <tr th:each="dto : ${result.dtoList}">
-                <th scope="row">[[${dto.gno}]]</th>
+                <th scope="row">
+                    <a th:href="@{/guestbook/read(gno=${dto.gno}, page=${result.page})}">[[${dto.gno}]]</a>
+                </th>
                 <td>[[${dto.title}]]</td>
                 <td>[[${dto.writer}]]</td>
                 <td>[[${#temporals.format(dto.regDate, 'yyyy/MM/dd')}]]</td>
@@ -51,6 +80,38 @@
                 <a class="page-link" th:href="@{/guestbook/list(page=${result.end+1})}">Next</a>
             </li>
         </ul>
+<!--        role="dialog"는 HTML의 접근성 속성으로, ARIA(Accessible Rich Internet Applications)의 일부입니다.
+        이 속성은 모달이나 팝업 창을 스크린 리더와 같은 보조 기술에 **"대화 상자"**로 인식시키기 위해 사용됩니다
+        화면 리더 사용자는 현재 위치가 독립적인 대화 상자임을 알게 되어, 페이지의 다른 부분에서 분리된 상태로 여기게 됩니다.-->
+        <div class="modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Modal title</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Modal body text goes here.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script th:inline="javascript">
+            //  redirectAttributes.addFlashAttribute("msg",gno); 여기서 넘어온 msg를 받아서 출력
+            // 게시물이 register 되고 redirect되는 목록 화면이 아니고 단순한 링크 이동의 경우에는 msg 변수의 값은 자동으로 null 처리됨
+            var msg = [[${msg}]];
+            console.log(msg);
+
+            if(msg){
+                $('.modal').modal();
+            }
+        </script>
     </th:block>
 </th:block>
 </html>

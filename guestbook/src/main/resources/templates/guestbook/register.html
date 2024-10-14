@@ -3,6 +3,7 @@
 <th:block th:replace="~{/layout/basic :: setContent(~{this::content})}">
     <th:block th:fragment="content">
         <h1 class="mt-4">GuestBook Register Page</h1>
+<!--        폼 내부에 데이터를 보내는 목적지 URL를 지칭-->
         <form th:action="@{/guestbook/register}" th:method="post">
             <div class="form-group">
                 <label>Title</label>

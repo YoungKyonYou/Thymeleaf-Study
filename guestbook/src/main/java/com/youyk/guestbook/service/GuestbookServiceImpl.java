@@ -1,5 +1,6 @@
 package com.youyk.guestbook.service;
 
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.youyk.guestbook.dto.GuestbookDTO;
 import com.youyk.guestbook.dto.PageRequestDTO;
 import com.youyk.guestbook.dto.PageResultDTO;
@@ -12,7 +13,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.function.Function;
+
+import static com.youyk.guestbook.entity.QGuestbook.guestbook;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -33,12 +37,64 @@ public class GuestbookServiceImpl implements GuestbookService{
     }
 
     @Override
+    public GuestbookDTO read(Long gno) {
+        Optional<Guestbook> result = repository.findById(gno);
+        return result.map(this::entityToDto).orElse(null);
+    }
+
+    @Override
+    public void remove(Long gno) {
+        repository.deleteById(gno);
+    }
+
+    @Override
+    public void modify(GuestbookDTO dto) {
+        Optional<Guestbook> result = repository.findById(dto.getGno());
+
+        if(result.isPresent()){
+            Guestbook entity = result.get();
+            entity.changeTitle(dto.getTitle());
+            entity.changeContent(dto.getContent());
+
+            repository.save(entity);
+        }
+    }
+
+    @Override
     public PageResultDTO<GuestbookDTO, Guestbook> getList(PageRequestDTO requestDTO) {
         Pageable pageable = requestDTO.getPageable(Sort.by("gno").descending());
-        Page<Guestbook> result = repository.findAll(pageable);
+
+        BooleanExpression booleanExpression = getSearch(requestDTO);
+
+
+        Page<Guestbook> result = repository.findAll(booleanExpression, pageable);
 
         Function<Guestbook, GuestbookDTO> fn = (this::entityToDto);
 
         return new PageResultDTO<>(result, fn);
+    }
+
+    private BooleanExpression getSearch(PageRequestDTO requestDTO){
+        String type = requestDTO.getType();
+
+        String keyword = requestDTO.getKeyword();
+
+        BooleanExpression booleanExpression = guestbook.gno.gt(0L); // gno > 0 조건만 생성
+
+        if(type == null || type.trim().isEmpty()){
+            return booleanExpression;
+        }
+
+        if(type.contains("t")){
+            booleanExpression = booleanExpression.and(guestbook.title.contains(keyword));
+        }
+        if(type.contains("c")){
+            booleanExpression = booleanExpression.and(guestbook.content.contains(keyword));
+        }
+        if(type.contains("w")){
+            booleanExpression = booleanExpression.and(guestbook.writer.contains(keyword));
+        }
+
+        return booleanExpression;
     }
 }

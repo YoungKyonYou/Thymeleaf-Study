@@ -1,16 +1,21 @@
 package com.youyk.guestbook.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
-public record GuestbookDTO(
-        Long gno,
-        String title,
-        String content,
-        String writer,
-        LocalDateTime regDate,
-        LocalDateTime modDate
-        ) {
+public class GuestbookDTO{
+    private Long gno;
+    private String title;
+    private String content;
+    private String writer;
+    private LocalDateTime regDate;
+    private LocalDateTime modDate;
 }
